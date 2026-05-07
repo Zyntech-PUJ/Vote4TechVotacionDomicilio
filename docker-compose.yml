@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # Base de datos para votos (solo INSERT)
+  votos-db:
+    image: postgres:15-alpine
+    container_name: votacion_votos_db
+    environment:
+      POSTGRES_DB: votacion_votos
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_INITDB_ARGS: "-c max_connections=100"
+    ports:
+      - "5432:5432"
+    volumes:
+      - votos-data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/init-votos.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - votacion-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Base de datos para información (candidatos, electores)
+  info-db:
+    image: postgres:15-alpine
+    container_name: votacion_info_db
+    environment:
+      POSTGRES_DB: votacion_info
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_INITDB_ARGS: "-c max_connections=100"
+    ports:
+      - "5433:5432"
+    volumes:
+      - info-data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/init-info.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - votacion-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: votacion_backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_PRIMARY_URL: jdbc:postgresql://votos-db:5432/votacion_votos
+      SPRING_DATASOURCE_PRIMARY_USERNAME: admin
+      SPRING_DATASOURCE_PRIMARY_PASSWORD: admin123
+      SPRING_DATASOURCE_SECONDARY_URL: jdbc:postgresql://info-db:5432/votacion_info
+      SPRING_DATASOURCE_SECONDARY_USERNAME: admin
+      SPRING_DATASOURCE_SECONDARY_PASSWORD: admin123
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: 8080
+    depends_on:
+      votos-db:
+        condition: service_healthy
+      info-db:
+        condition: service_healthy
+    networks:
+      - votacion-network
+    volumes:
+      - ./backend/logs:/app/logs
+    command: ["java", "-jar", "/app/votacion-backend.jar"]
+
+volumes:
+  votos-data:
+  info-data:
+
+networks:
+  votacion-network:
+    driver: bridge
