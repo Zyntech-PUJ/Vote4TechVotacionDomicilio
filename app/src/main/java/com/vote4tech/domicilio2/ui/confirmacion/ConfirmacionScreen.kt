@@ -13,7 +13,11 @@ import com.vote4tech.domicilio2.ui.DomicilioViewModel
 import com.vote4tech.domicilio2.ui.Routes
 
 @Composable
-fun ConfirmacionScreen(viewModel: DomicilioViewModel, navController: NavController) {
+fun ConfirmacionScreen(
+    viewModel: DomicilioViewModel,
+    navController: NavController,
+    onVotarEnOtraEleccion: () -> Unit
+) {
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state) {
@@ -77,6 +81,16 @@ fun ConfirmacionScreen(viewModel: DomicilioViewModel, navController: NavControll
                 Text("El voto será enviado al sincronizar.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(
+                    onClick = {
+                        viewModel.prepararNuevaEleccionMismoCiudadano()
+                        onVotarEnOtraEleccion()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Votar en otra elección")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
                     onClick = {
                         viewModel.reiniciar()
                         navController.navigate(Routes.IDENTIFICACION) {

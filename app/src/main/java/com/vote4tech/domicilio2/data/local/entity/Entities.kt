@@ -25,7 +25,17 @@ data class CandidatoLocalEntity(
 data class CiudadanoLocalEntity(
     @PrimaryKey val cedula: String,
     val nombre: String,
-    val habilitadoDomicilio: Boolean
+    val habilitadoDomicilio: Boolean,
+    val tipoDocumento: String = "CC",
+    val direccion: String? = null
+)
+
+@Entity(tableName = "funcionarios")
+data class FuncionarioLocalEntity(
+    @PrimaryKey val cedula: String,
+    val nombre: String,
+    val password: String,
+    val activo: Boolean = true
 )
 
 enum class EstadoVoto { PENDIENTE, SINCRONIZADO }

@@ -25,11 +25,12 @@ class MainActivity : ComponentActivity() {
                 eleccionDao = db.eleccionDao(),
                 candidatoDao = db.candidatoDao(),
                 ciudadanoDao = db.ciudadanoLocalDao(),
-                votoDao = db.votoLocalDao()
+                votoDao = db.votoLocalDao(),
+                funcionarioDao = db.funcionarioDao()
             )
         )[DomicilioViewModel::class.java]
 
-        val startDestination = if (app.prefs.isConfigured) Routes.SYNC else Routes.CONFIG
+        val startDestination = if (app.prefs.isConfigured) Routes.IDENTIFICACION else Routes.CONFIG
 
         setContent {
             Vote4TechVotacionDomicilio2Theme {

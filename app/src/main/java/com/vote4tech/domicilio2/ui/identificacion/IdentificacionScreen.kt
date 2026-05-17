@@ -13,11 +13,17 @@ import androidx.navigation.NavController
 import com.vote4tech.domicilio2.ui.DomicilioState
 import com.vote4tech.domicilio2.ui.DomicilioViewModel
 import com.vote4tech.domicilio2.ui.Routes
+import kotlinx.coroutines.launch
 
 @Composable
-fun IdentificacionScreen(viewModel: DomicilioViewModel, navController: NavController) {
+fun IdentificacionScreen(
+    viewModel: DomicilioViewModel,
+    navController: NavController
+) {
     val state by viewModel.state.collectAsState()
     var cedula by remember { mutableStateOf("") }
+    var mostrarDialogoUrna by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(state) {
         when (val s = state) {
@@ -27,8 +33,34 @@ fun IdentificacionScreen(viewModel: DomicilioViewModel, navController: NavContro
             is DomicilioState.EleccionesListas -> {
                 navController.navigate(Routes.ELECCION)
             }
+            is DomicilioState.CiudadanoUrna -> {
+                mostrarDialogoUrna = s.nombre
+            }
             else -> {}
         }
+    }
+
+    if (mostrarDialogoUrna != null) {
+        AlertDialog(
+            onDismissRequest = {
+                mostrarDialogoUrna = null
+                viewModel.reiniciar()
+                cedula = ""
+            },
+            title = { Text("Acceso Restringido") },
+            text = {
+                Text("${mostrarDialogoUrna} debe votar en la urna presencial. Este dispositivo es exclusivo para votación domiciliaria.")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    mostrarDialogoUrna = null
+                    viewModel.reiniciar()
+                    cedula = ""
+                }) {
+                    Text("Entendido")
+                }
+            }
+        )
     }
 
     Column(
@@ -82,6 +114,23 @@ fun IdentificacionScreen(viewModel: DomicilioViewModel, navController: NavContro
             enabled = cedula.length >= 6 && state !is DomicilioState.Cargando
         ) {
             Text("Verificar ciudadano")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedButton(
+            onClick = {
+                scope.launch {
+                    if (viewModel.tieneDatosLocales()) {
+                        navController.navigate(Routes.CONFIG_LOGIN)
+                    } else {
+                        navController.navigate(Routes.CONFIG)
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Configuración")
         }
     }
 }

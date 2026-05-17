@@ -7,10 +7,12 @@ import androidx.room.RoomDatabase
 import com.vote4tech.domicilio2.data.local.dao.CandidatoDao
 import com.vote4tech.domicilio2.data.local.dao.CiudadanoLocalDao
 import com.vote4tech.domicilio2.data.local.dao.EleccionDao
+import com.vote4tech.domicilio2.data.local.dao.FuncionarioDao
 import com.vote4tech.domicilio2.data.local.dao.VotoLocalDao
 import com.vote4tech.domicilio2.data.local.entity.CandidatoLocalEntity
 import com.vote4tech.domicilio2.data.local.entity.CiudadanoLocalEntity
 import com.vote4tech.domicilio2.data.local.entity.EleccionLocalEntity
+import com.vote4tech.domicilio2.data.local.entity.FuncionarioLocalEntity
 import com.vote4tech.domicilio2.data.local.entity.VotoLocalEntity
 
 @Database(
@@ -18,9 +20,10 @@ import com.vote4tech.domicilio2.data.local.entity.VotoLocalEntity
         EleccionLocalEntity::class,
         CandidatoLocalEntity::class,
         CiudadanoLocalEntity::class,
-        VotoLocalEntity::class
+        VotoLocalEntity::class,
+        FuncionarioLocalEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class DomicilioDatabase : RoomDatabase() {
@@ -28,6 +31,7 @@ abstract class DomicilioDatabase : RoomDatabase() {
     abstract fun candidatoDao(): CandidatoDao
     abstract fun ciudadanoLocalDao(): CiudadanoLocalDao
     abstract fun votoLocalDao(): VotoLocalDao
+    abstract fun funcionarioDao(): FuncionarioDao
 
     companion object {
         @Volatile private var INSTANCE: DomicilioDatabase? = null
@@ -35,6 +39,7 @@ abstract class DomicilioDatabase : RoomDatabase() {
         fun getInstance(context: Context): DomicilioDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(context, DomicilioDatabase::class.java, "domicilio_db")
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { INSTANCE = it }
             }

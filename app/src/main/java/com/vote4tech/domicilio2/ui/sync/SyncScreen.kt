@@ -11,7 +11,7 @@ import com.vote4tech.domicilio2.ui.DomicilioState
 import com.vote4tech.domicilio2.ui.DomicilioViewModel
 
 @Composable
-fun SyncScreen(viewModel: DomicilioViewModel, onIrAVotar: () -> Unit) {
+fun SyncScreen(viewModel: DomicilioViewModel) {
     val state by viewModel.state.collectAsState()
 
     Column(
@@ -73,15 +73,6 @@ fun SyncScreen(viewModel: DomicilioViewModel, onIrAVotar: () -> Unit) {
             enabled = !isLoading
         ) {
             Text("Subir votos a CouchDB")
-        }
-
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-        OutlinedButton(
-            onClick = onIrAVotar,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Ir a votar")
         }
     }
 }

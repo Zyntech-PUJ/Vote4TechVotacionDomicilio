@@ -1,4 +1,4 @@
-package com.vote4tech.domicilio2.ui
+﻿package com.vote4tech.domicilio2.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,11 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vote4tech.domicilio2.ui.config.ConfigScreen
-import com.vote4tech.domicilio2.ui.sync.SyncScreen
 import com.vote4tech.domicilio2.ui.identificacion.IdentificacionScreen
 import com.vote4tech.domicilio2.ui.eleccion.EleccionScreen
 import com.vote4tech.domicilio2.ui.votacion.VotacionScreen
 import com.vote4tech.domicilio2.ui.confirmacion.ConfirmacionScreen
+import com.vote4tech.domicilio2.ui.consultas.ConsultasLoginScreen
+import com.vote4tech.domicilio2.ui.consultas.ConsultasScreen
 import com.vote4tech.domicilio2.util.PrefsManager
 
 @Composable
@@ -27,21 +28,22 @@ fun DomicilioNavHost(
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Routes.CONFIG) {
             ConfigScreen(
-                prefs = prefs,
-                onConfigGuardada = {
-                    navController.navigate(Routes.SYNC) {
-                        popUpTo(Routes.CONFIG) { inclusive = true }
-                    }
+                viewModel = viewModel,
+                onConsultasClick = {
+                    navController.navigate(Routes.CONSULTAS)
                 }
             )
         }
-        composable(Routes.SYNC) {
-            SyncScreen(
+        composable(Routes.CONFIG_LOGIN) {
+            ConsultasLoginScreen(
                 viewModel = viewModel,
-                onIrAVotar = {
-                    navController.navigate(Routes.IDENTIFICACION) {
-                        popUpTo(Routes.SYNC) { inclusive = false }
+                onLoginExito = {
+                    navController.navigate(Routes.CONFIG) {
+                        popUpTo(Routes.CONFIG_LOGIN) { inclusive = true }
                     }
+                },
+                onAtras = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -66,7 +68,20 @@ fun DomicilioNavHost(
         composable(Routes.CONFIRMACION) {
             ConfirmacionScreen(
                 viewModel = viewModel,
-                navController = navController
+                navController = navController,
+                onVotarEnOtraEleccion = {
+                    navController.navigate(Routes.ELECCION)
+                }
+            )
+        }
+        composable(Routes.CONSULTAS) {
+            ConsultasScreen(
+                viewModel = viewModel,
+                onAtras = {
+                    navController.navigate(Routes.IDENTIFICACION) {
+                        popUpTo(Routes.CONSULTAS) { inclusive = true }
+                    }
+                }
             )
         }
     }

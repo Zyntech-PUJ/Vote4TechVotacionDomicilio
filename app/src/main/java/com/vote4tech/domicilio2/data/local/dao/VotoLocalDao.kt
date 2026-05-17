@@ -27,4 +27,7 @@ interface VotoLocalDao {
 
     @Query("SELECT COUNT(*) FROM votos_locales WHERE estado = 'SINCRONIZADO'")
     suspend fun contarSincronizados(): Int
+
+    @Query("SELECT COUNT(*) FROM votos_locales")
+    suspend fun contarTodos(): Int
 }

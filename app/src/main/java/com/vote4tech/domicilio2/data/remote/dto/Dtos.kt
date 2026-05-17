@@ -19,14 +19,23 @@ data class CandidatoRemotoDto(
 data class CiudadanoRemotoDto(
     val cedula: String,
     val nombre: String,
-    val habilitadoDomicilio: Boolean
+    val habilitadoDomicilio: Boolean,
+    val tipoDocumento: String = "CC",
+    val direccion: String? = null
+)
+
+data class FuncionarioRemotoDto(
+    val cedula: String,
+    val nombre: String,
+    val password: String,
+    val activo: Boolean
 )
 
 data class VotoCouchDto(
     val _id: String,
     val cedula: String,
     val idEleccion: Long,
-    val idCandidato: Long,
+    val idSeleccion: Long,
     val idFuncionario: String,
     val timestamp: Long
 )

@@ -12,7 +12,7 @@ class PrefsManager(context: Context) {
         set(value) = prefs.edit().putString("centralApiUrl", value).apply()
 
     var couchDbUrl: String
-        get() = prefs.getString("couchDbUrl", "http://10.0.2.2:5984/votos_domicilio") ?: "http://10.0.2.2:5984/votos_domicilio"
+        get() = prefs.getString("couchDbUrl", "http://10.0.2.2:5985/votos_domicilio") ?: "http://10.0.2.2:5985/votos_domicilio"
         set(value) = prefs.edit().putString("couchDbUrl", value).apply()
 
     var couchDbUser: String
@@ -28,6 +28,14 @@ class PrefsManager(context: Context) {
         set(value) = prefs.edit().putString("idFuncionario", value).apply()
 
     var isConfigured: Boolean
-        get() = prefs.getBoolean("isConfigured", false)
+        get() = prefs.getBoolean("isConfigured", true)
         set(value) = prefs.edit().putBoolean("isConfigured", value).apply()
+
+    var ultimaDescarga: Long
+        get() = prefs.getLong("ultimaDescarga", 0L)
+        set(value) = prefs.edit().putLong("ultimaDescarga", value).apply()
+
+    var ultimaSubida: Long
+        get() = prefs.getLong("ultimaSubida", 0L)
+        set(value) = prefs.edit().putLong("ultimaSubida", value).apply()
 }

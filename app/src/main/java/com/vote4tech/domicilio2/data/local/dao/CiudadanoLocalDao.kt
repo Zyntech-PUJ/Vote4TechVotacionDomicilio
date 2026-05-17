@@ -14,6 +14,15 @@ interface CiudadanoLocalDao {
     @Query("SELECT * FROM ciudadanos WHERE cedula = :cedula AND habilitadoDomicilio = 1")
     suspend fun buscarHabilitado(cedula: String): CiudadanoLocalEntity?
 
+    @Query("SELECT * FROM ciudadanos WHERE cedula = :cedula")
+    suspend fun buscarCualquiera(cedula: String): CiudadanoLocalEntity?
+
     @Query("DELETE FROM ciudadanos")
     suspend fun limpiarTodos()
+
+    @Query("SELECT * FROM ciudadanos WHERE habilitadoDomicilio = 1 AND (nombre LIKE '%' || :filtro || '%' OR cedula LIKE '%' || :filtro || '%')")
+    suspend fun buscarPorFiltro(filtro: String): List<CiudadanoLocalEntity>
+
+    @Query("SELECT COUNT(*) FROM ciudadanos")
+    suspend fun contarTodos(): Int
 }

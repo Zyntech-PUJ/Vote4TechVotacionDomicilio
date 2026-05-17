@@ -28,10 +28,12 @@ class DomicilioApplication : Application() {
         )
         syncRepository = SyncRepository(
             api = apiClients,
+            prefs = prefs,
             eleccionDao = database.eleccionDao(),
             candidatoDao = database.candidatoDao(),
             ciudadanoDao = database.ciudadanoLocalDao(),
-            votoDao = database.votoLocalDao()
+            votoDao = database.votoLocalDao(),
+            funcionarioDao = database.funcionarioDao()
         )
     }
 }
